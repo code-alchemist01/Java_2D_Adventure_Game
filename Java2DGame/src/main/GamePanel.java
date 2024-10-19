@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints.Key;
 
 import javax.swing.JPanel;
 
@@ -11,6 +12,7 @@ public class GamePanel extends JPanel implements Runnable{
 		// Screen Setting
 		
 	
+		private static final int FPS = 60;
 		final int originalTileSize = 16; // 16 x 16 tile size
 		final int scale = 3; // 16 x  3 = 48
 		
@@ -22,7 +24,16 @@ public class GamePanel extends JPanel implements Runnable{
 		final int screenHeight = tileSize * maxScreenRow; // 576 pixel
 		
 		
+		KeyHandler keyH = new KeyHandler();
+		
+		
 		Thread gameThread;
+		
+		// Set player default position
+		
+		int playerX = 100;
+		int playerY = 100;
+		int playerSpeed = 4;
 		
 		
 		
@@ -30,10 +41,11 @@ public class GamePanel extends JPanel implements Runnable{
 			
 			this.setPreferredSize(new Dimension(screenWidth, screenHeight));
 			this.setBackground(Color.black);
-			this.setDoubleBuffered(true);
+			this.setDoubleBuffered(true);	
+			this.addKeyListener(keyH); // add keyhandler
+			this.setFocusable(true); // In Java, the setFocusable(true) method makes a user interface element selectable and interactable with the keyboard or mouse.
 			
 		}
-
 		
 		
 		public void startGameThread() {
@@ -41,28 +53,57 @@ public class GamePanel extends JPanel implements Runnable{
 			gameThread.start();
 		}
 
-
+		
 		@Override
 		public void run() {
 			
+			double drawInterval = 1000000000/FPS; // 0.0166666 seconds
+			double nextDrawTime = System.nanoTime() + drawInterval;	
+			
 			while(gameThread != null) {
 				
-				System.out.println("Game Lopp Running...");
-				
-				// 1 UPDATE : update information such as character positions 
 				update();
 				
-				// 2 DRAW : draw the screen with the update information
-				repaint();
+				repaint();		
 				
-			}
+				
+				try {
+					double remainingTime = nextDrawTime - System.nanoTime();
+					remainingTime = remainingTime/1000000;
+					
+					if(remainingTime < 0) {
+						remainingTime = 0;
+					}
+					
+					Thread.sleep((long) remainingTime);
+					
+					nextDrawTime += drawInterval;
+					
+				} catch (InterruptedException e) {
+					e.printStackTrace();
 			
+				}
+			}		
 		}
+		
 		
 		
 		public void update() {
-			
+			if(keyH.upPressed == true) {
+				playerY -= playerSpeed;
+			}
+			else if(keyH.downPressed == true) {
+				playerY += playerSpeed;
+			}
+			else if(keyH.leftPressed == true) {
+				playerX -= playerSpeed;
+			}
+			else if(keyH.rightPressed == true) {
+				playerX += playerSpeed;
+			}
 		}
+		
+		
 		
 		public void paintComponent(Graphics g) {
 			super.paintComponent(g);
@@ -72,7 +113,7 @@ public class GamePanel extends JPanel implements Runnable{
 			
 			g2.setColor(Color.white);
 			
-			g2.fillRect(100, 100, tileSize, tileSize);
+			g2.fillRect(playerX, playerY, tileSize, tileSize);
 			
 			g2.dispose();
 			
