@@ -14,3 +14,4 @@ public class Entity {
 	public int spriteNum = 1;
 	
 }
+	
