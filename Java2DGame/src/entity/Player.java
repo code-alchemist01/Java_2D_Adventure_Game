@@ -9,8 +9,9 @@ import javax.imageio.ImageIO;
 
 import main.GamePanel;
 import main.KeyHandler;
+import util.Direction;
 
-public class Player extends Entity{
+public class Player extends Entity {
 
 	GamePanel gp;
 	KeyHandler keyH;
@@ -28,7 +29,7 @@ public class Player extends Entity{
 		x = 100;
 		y = 100;
 		speed = 4;
-		direction = "down";
+		direction = Direction.DOWN;
 	}
 	
 	
@@ -61,19 +62,19 @@ public class Player extends Entity{
 		
 		if(keyH.upPressed == true || keyH.downPressed == true || keyH.leftPressed == true || keyH.rightPressed == true) {
 			if(keyH.upPressed == true) {
-				direction = "up";
+				direction = Direction.UP;
 				y -= speed;
 			}
 			else if(keyH.downPressed == true) {
-				direction = "down";
+				direction = Direction.DOWN;
 				y += speed;
 			}
 			else if(keyH.leftPressed == true) {
-				direction = "left";
+				direction = Direction.LEFT;
 				x -= speed;
 			}
 			else if(keyH.rightPressed == true) {
-				direction = "right";
+				direction = Direction.RIGHT;
 				x += speed;
 			}
 			spriteCounter++;
@@ -102,38 +103,18 @@ public class Player extends Entity{
 		BufferedImage image = null;
 		
 		switch(direction) {
-		case "up":
-			if(spriteNum == 1) {
-				image = up1;
-			}	
-			if(spriteNum == 2) {
-				image = up2;
-			}
-			break;
-		case "down":
-			if(spriteNum == 1) {
-				image = down1;
-			}	
-			if(spriteNum == 2) {
-				image = down2;
-			}
-			break;
-		case "left":
-			if(spriteNum == 1) {
-				image = left1;
-			}	
-			if(spriteNum == 2) {
-				image = left2;
-			}
-			break;
-		case "right":
-			if(spriteNum == 1) {
-				image = right1;
-			}	
-			if(spriteNum == 2) {
-				image = right2;
-			}
-			break;
+			case Direction.UP:
+				image = spriteNum == 1 ? up1 : up2;
+				break;
+			case Direction.DOWN:
+				image = spriteNum == 1 ? down1 : down2;
+				break;
+			case Direction.LEFT:
+				image = spriteNum == 1 ? left1 : left2;
+				break;
+			case Direction.RIGHT:
+				image = spriteNum == 1 ? right1 : right2;
+				break;
 		}
 		
 		g2.drawImage(image, x, y, gp.tileSize, gp.tileSize, null);

@@ -2,6 +2,7 @@ package main;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints.Key;
@@ -14,10 +15,9 @@ import tile.TileManager;
 public class GamePanel extends JPanel implements Runnable{
 		// Screen Setting
 		
-	
-		private static final int FPS = 60;
-		final int originalTileSize = 16; // 16 x 16 tile size
-		final int scale = 3; // 16 x  3 = 48
+		public static final int FPS = 60;
+		public final int originalTileSize = 16; // 16 x 16 tile size
+		public final int scale = 3; // 16 x  3 = 48
 		
 		public final int tileSize = originalTileSize * scale; // 48 x 48 tile size 
 		public final int maxScreenCol = 16;
@@ -32,6 +32,9 @@ public class GamePanel extends JPanel implements Runnable{
 		KeyHandler keyH = new KeyHandler();
 		Thread gameThread;
 		Player player = new Player(this, keyH);
+		
+		public static final Color OSDCOLOR = new Color(72, 200, 72);
+		public static final Font OSDFONT = new Font("Consolas", Font.PLAIN, 18);
 		
 		public GamePanel() {
 			
@@ -48,6 +51,10 @@ public class GamePanel extends JPanel implements Runnable{
 			gameThread = new Thread(this);
 			gameThread.start();
 		}
+		
+		private int fpsCounter = 0;
+		private long fpsMillis;
+		private int lastFps;
 
 		
 		@Override
@@ -55,11 +62,11 @@ public class GamePanel extends JPanel implements Runnable{
 			
 			double drawInterval = 1000000000/FPS; // 0.0166666 seconds
 			double nextDrawTime = System.nanoTime() + drawInterval;	
+			fpsMillis = System.currentTimeMillis();
 			
 			while(gameThread != null) {
 				
 				update();
-				
 				repaint();		
 				
 				
@@ -82,43 +89,34 @@ public class GamePanel extends JPanel implements Runnable{
 			}		
 		}
 		
-		
-		
 		public void update() {
+			if (System.currentTimeMillis() - fpsMillis > 1000) {
+				fpsMillis = System.currentTimeMillis();
+				lastFps = fpsCounter;
+				fpsCounter = 0;
+			} else fpsCounter++;
+			
 			player.update();
 		}
 		
-		
-		
 		public void paintComponent(Graphics g) {
 			super.paintComponent(g);
-			
 			
 			Graphics2D g2 = (Graphics2D)g;
 			
 			tileM.draw(g2); // first draw tile and second on draw player
 			player.draw(g2);
 			
-			g2.dispose();
+			g2.setFont(OSDFONT);
+			String fpsTxt = "FPS:" + lastFps;
+			g2.setColor(Color.BLACK);
+			g2.drawString(fpsTxt, 4, screenHeight-10);
 			
+			g2.setColor(OSDCOLOR);
+			g2.drawString(fpsTxt, 3, screenHeight-11);
+			
+			g2.dispose();
 		}
 		
-		
-		
-		
-		
-	
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-
-	
 
 }
