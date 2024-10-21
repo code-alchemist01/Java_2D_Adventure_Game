@@ -15,7 +15,6 @@ import tile.TileManager;
 public class GamePanel extends JPanel implements Runnable{
 		// Screen Setting
 		
-		public static final int FPS = 60;
 		public final int originalTileSize = 16; // 16 x 16 tile size
 		public final int scale = 3; // 16 x  3 = 48
 		
@@ -27,11 +26,28 @@ public class GamePanel extends JPanel implements Runnable{
 		public final int screenHeight = tileSize * maxScreenRow; // 576 pixel
 		
 		
+		// WORLD SETTİNGS
+		
+		
+		public final int maxWorldCol = 50;
+		public final int maxWorldRow = 50;
+		public final int maxWorldWidth = tileSize * maxWorldCol;
+		public final int maxWorldHeight = tileSize * maxScreenRow;
+		
+		
+		
+		
+		
+		
+		
+		// FPS SETTİNGS
+		
+		int FPS = 60;
 		
 		TileManager tileM = new TileManager(this);
 		KeyHandler keyH = new KeyHandler();
 		Thread gameThread;
-		Player player = new Player(this, keyH);
+		public Player player = new Player(this, keyH);
 		
 		public static final Color OSDCOLOR = new Color(72, 200, 72);
 		public static final Font OSDFONT = new Font("Consolas", Font.PLAIN, 18);
