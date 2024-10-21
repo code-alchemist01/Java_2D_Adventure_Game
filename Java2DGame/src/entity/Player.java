@@ -2,6 +2,7 @@ package entity;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
@@ -26,6 +27,13 @@ public class Player extends Entity {
 		
 		screenX = gp.screenWidth/2 - (gp.tileSize/2);
 		screenY = gp.screenHeight/2 - (gp.tileSize/2);
+		
+		
+		solidArea = new Rectangle();
+		solidArea.x = 8;
+		solidArea.y = 16;
+		solidArea.width = 32;
+		solidArea.y = 32;
 		
 		
 		setDefaultValues();	
@@ -71,22 +79,32 @@ public class Player extends Entity {
 		if(keyH.upPressed == true || keyH.downPressed == true || keyH.leftPressed == true || keyH.rightPressed == true) {
 			if(keyH.upPressed == true) {
 				direction = Direction.UP;
-				worldY -= speed;
 			}
 			else if(keyH.downPressed == true) {
 				direction = Direction.DOWN;
-				worldY += speed;
 			}
 			else if(keyH.leftPressed == true) {
 				direction = Direction.LEFT;
-				worldX -= speed;
 			}
 			else if(keyH.rightPressed == true) {
 				direction = Direction.RIGHT;
-				worldX += speed;
 			}
-			spriteCounter++;
 			
+			//CHECK TILE COLLISON
+			collisionOn = false;
+			gp.cChecker.checkTile(this);
+			
+			// IF COLLISION IS FALSE , PLAYER CANT MOVE 
+			
+			if(collisionOn == false) {
+				switch(direction) {
+				case Direction.UP: worldY -= speed; break;
+				case Direction.DOWN: worldY += speed; break;
+				case Direction.LEFT: worldX -= speed; break;
+				case Direction.RIGHT: worldX += speed; break;
+			}			
+		}				
+			spriteCounter++;	
 			if(spriteCounter > 12) {
 				if(spriteNum == 1) {
 					spriteNum = 2;
@@ -97,10 +115,10 @@ public class Player extends Entity {
 				spriteCounter = 0;
 			}
 		}
-		
-		
+	}	
 
-	}
+
+	
 	
 
 	public void draw(Graphics2D g2) {
